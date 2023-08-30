@@ -1,0 +1,80 @@
+#include <Wire.h>
+#include <Adafruit_Sensor.h>
+#include <Adafruit_BMP280.h>
+#include <SPI.h>
+#include <SD.h>
+#include <DHT.h>
+
+
+
+#define SD_CARD_CS_PIN 10
+#define FILE_NAME "Environment.txt"
+File sdCardFile;
+#define DHT_PIN 4
+#define DHTTYPE DHT11
+#define BMP_LED_PIN 2
+#define DHT_LED_PIN 3
+
+bool checkForError() {
+  // Add your error-checking logic here
+  // Return true if there is an error, false otherwise
+}
+void writeToSDCard(float bmpTemp, float pressure, float dhtTemp, float humidity, float tempDiff) {
+  // Code to write the data to the SD card goes here
+  // You can use the provided temperature, pressure, humidity, and temperature difference values
+}
+
+bool allGoesWell() {
+  // Code to check if everything is going well goes here
+  // Return true if everything is fine, false otherwise
+}
+Adafruit_BMP280 bmp;
+DHT dht(DHT_PIN, DHT11);
+
+File dataFile;
+
+void setup() {
+  pinMode(BMP_LED_PIN, OUTPUT);
+  pinMode(DHT_LED_PIN, OUTPUT);
+  
+  if (checkForError()) {
+    while (true) {
+      digitalWrite(BMP_LED_PIN, HIGH);
+      digitalWrite(DHT_LED_PIN, HIGH);
+      delay(100);
+      digitalWrite(BMP_LED_PIN, LOW);
+      digitalWrite(DHT_LED_PIN, LOW);
+      delay(100);
+    }
+  }
+}
+
+void loop() {
+  float bmpTemperature = bmp.readTemperature();
+  float dhtTemperature = dht.readTemperature();
+  float humidity = dht.readHumidity();
+  float pressure = bmp.readPressure() / 100.0;
+  float temperatureDifference = dhtTemperature - bmpTemperature;
+
+
+  
+  writeToSDCard(bmpTemperature, pressure, dhtTemperature, humidity, temperatureDifference);
+
+  if (allGoesWell()) {
+    digitalWrite(BMP_LED_PIN, HIGH);
+    digitalWrite(DHT_LED_PIN, HIGH);
+    delay(750);
+    digitalWrite(BMP_LED_PIN, LOW);
+    digitalWrite(DHT_LED_PIN, LOW);
+    delay(750);
+  } else {
+    digitalWrite(BMP_LED_PIN, HIGH);
+    digitalWrite(DHT_LED_PIN, HIGH);
+    delay(350);
+    digitalWrite(BMP_LED_PIN, LOW);
+    digitalWrite(DHT_LED_PIN, LOW);
+    delay(300);
+  }
+
+  delay(2000);
+}
